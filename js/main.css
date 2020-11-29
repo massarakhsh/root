@@ -1,0 +1,39 @@
+body {
+    margin: 2px;
+    font-family: Calibri;
+}
+
+div, table, tr, td {
+    border-spacing: 0;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap;
+}
+
+img {
+    padding: 0;
+    margin: 0;
+}
+
+.fill {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+table.page {
+    width: 100%;
+    margin: 2px 0;
+}
+
+table.menu {
+    width: 100%;
+    background: #ddd;
+}
+
+.menu td {
+    border: 1px solid #ddd;
+    padding: 1px 4px;
+}
+
