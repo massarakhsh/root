@@ -1,8 +1,11 @@
 import * as core from './core.js';
+import * as address from './address.js';
 
 const ce = React.createElement;
 
 export class ElmRoot extends core.ElmStack {
+    main = "root";
+
     constructor(path) {
         super();
         this.build(path);
@@ -13,7 +16,9 @@ export class ElmRoot extends core.ElmStack {
         if (match) {
             const mode = match[1];
             path = match[2];
-            new ElmRoot(path);
+            if (mode =="address") {
+                new address.ElmAddress(path);
+            }
         }
     }
 

@@ -4,10 +4,14 @@ export const stackElms = [];
 
 export class ElmStack {
     level = 0;
+    main = "";
     mode = "";
 
     constructor() {
         this.level = stackElms.length;
+        if (this.level > 0) {
+            stackElms[this.level - 1].mode = this.main
+        }
         stackElms.push(this);
     }
 
@@ -62,5 +66,21 @@ export class ElmStack {
     isLeaf() {
         return this.level + 1 >= stackElms.length;
     }
+
+    getPath() {
+        let path = (this.level > 0) ? stackElms[this.level - 1].getPath() + "/" + this.main : "";
+        if (this.level + 1 >= stackElms.length && this.mode != "") {
+            path += "/" + this.mode;
+        }
+        return path;
+    }
+}
+
+export function clearStack() {
+    stackElms.splice(0, stackElms.length);
+}
+
+export function getStackPath() {
+    return (stackElms.length > 0) ? stackElms[stackElms.length - 1].getPath() : "";
 }
 
