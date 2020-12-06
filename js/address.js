@@ -3,21 +3,30 @@ import * as core from './core.js';
 const ce = React.createElement;
 
 export class ElmAddress extends core.ElmStack {
-    main = "address";
-
-    constructor(path) {
-        super();
-        this.build(path);
+    constructor(level, props, path) {
+        super(level, "address", props, path);
+        this.build();
     }
 
-    build(path) {
+    build() {
     }
 
-    showInfo() {
+    showBody() {
         if (this.isLeaf()) {
-            return ce("div", null, this.showCommonMap());
+            return ce("div", null, this.showCommon());
         } else {
             return super.showInfo();
+        }
+    }
+
+    showCommon() {
+        if (this.dias || true) {
+            return this.showCommonMap()
+        } else {
+            core.getListServer('IPZone', function(list) {
+                this.dias = list;
+            });
+            return 'Loading...';
         }
     }
 
@@ -45,29 +54,17 @@ export class ElmAddress extends core.ElmStack {
         }
         return ce("table", { className: "page" },
             ce("tbody", null, ce("tr", null,
-                ce("td", null, ...left),
-                ce("td", null, ...right),
+                ce("td", { className: "column" }, ...left),
+                ce("td", { className: "column" }, ...right),
             )),
         )
     }
 
     showDia(address, volume) {
-        return ce("table", { className: "wind" },
-            ce("thead", null, ce("tr", null, ce("td", { background: '#ddd' }, address))),
-            ce("tbody", null, ce("tr", null, ce("td", null, volume))),
-        )
-    }
-}
-
-class WhatLine extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { pressed: false };
-    }
-
-    render() {
-        let prs = this.state.pressed;
-        return ce("b", { onClick: () => this.setState({ pressed: !prs }) }, (prs) ? "Да": "Нет");
+        let title = 'Адреса ' + core.ipToShow(address);
+        let body = 'Объем: ' + core.ipFromShow(core.ipToShow(address));
+        let props = { cls: "wide", title: title, body: body };
+        return ce(core.WindowBox, props);
     }
 }
 

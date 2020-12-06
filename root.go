@@ -5,6 +5,7 @@ import (
 	"github.com/massarakhsh/lik"
 	"github.com/massarakhsh/lik/likapi"
 	"github.com/massarakhsh/root/front"
+	"github.com/massarakhsh/root/one"
 	"log"
 	"net/http"
 	"os"
@@ -27,9 +28,9 @@ func main() {
 	if !getArgs() {
 		return
 	}
-	//if !one.OpenBase(HostServ, HostBase, HostUser, HostPass) {
-	//	return
-	//}
+	if !one.OpenBase(HostServ, HostBase, HostUser, HostPass) {
+		return
+	}
 	startHttp()
 	for !IsStoping {
 		time.Sleep(time.Second)

@@ -4,34 +4,36 @@ import * as address from './address.js';
 const ce = React.createElement;
 
 export class ElmRoot extends core.ElmStack {
-    main = "root";
-
-    constructor(path) {
-        super();
-        this.build(path);
+    constructor(level, props, path) {
+        super(level, "root", props, path);
+        this.build();
     }
 
-    build(path) {
-        const match = /^\/([^\/]*)(.*)/.exec(path);
-        if (match) {
-            const mode = match[1];
-            path = match[2];
-            if (mode =="address") {
-                new address.ElmAddress(path);
-            }
+    build() {
+        if (this.state.mode == 'root') {
+            new ElmRoot(this.level+1, null, this.path);
+        } else if (this.state.mode == 'address') {
+            new address.ElmAddress(this.level+1, null, this.path);
         }
     }
 
-    showInfo() {
+    buildMenu() {
+        return [
+            { mode: 'root', title: 'Рут'},
+            { mode: 'address', title: 'Адреса'},
+        ];
+    }
+
+    showBody() {
         if (this.isLeaf()) {
-            return ce("div", null, ce(CompRoot));
+            return ce("div", null, ce(DomRoot));
         } else {
-            return super.showInfo();
+            return super.showBody();
         }
     }
 }
 
-class CompRoot extends React.Component {
+class DomRoot extends React.Component {
     constructor(props) {
         super(props);
         this.state = { liked: false };
@@ -48,7 +50,7 @@ class CompRoot extends React.Component {
     }
 }
 
-class WhatLine extends React.Component {
+export class WhatLine extends React.Component {
     constructor(props) {
         super(props);
         this.state = { pressed: false };

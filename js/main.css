@@ -22,6 +22,19 @@ img {
     vertical-align: middle;
 }
 
+.wide {
+    width: 100%;
+}
+
+.top {
+    vertical-align: top;
+}
+
+.column {
+    vertical-align: top;
+    padding: 2px 8px;
+}
+
 table.page {
     width: 100%;
     margin: 2px 0;
@@ -29,11 +42,33 @@ table.page {
 
 table.menu {
     width: 100%;
-    background: #ddd;
+    background: #667;
 }
 
 .menu td {
-    border: 1px solid #ddd;
+    border: 1px solid #667;
+    color: #fff;
     padding: 1px 4px;
+}
+
+.menu td.menusel {
+    background: #fff;
+    border-bottom-color: #fff;
+    color: #000;
+}
+
+table.windowbox {
+    margin: 2px 4px !important;
+}
+
+.windowbox > thead > tr > td {
+    border: 1px solid #888;
+    background: #aaa;
+    padding: 1px 8px;
+}
+
+.windowbox > tbody > tr > td {
+    border: 1px solid #888;
+    padding: 1px 8px;
 }
 

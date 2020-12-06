@@ -11,7 +11,9 @@ func (rule *DataRule) Execute() lik.Seter {
 }
 
 func (rule *DataRule) execute() {
-	if rule.IsShift("time") {
+	if rule.IsShift("list") {
+		rule.apiList(rule.Shift())
+	} else if rule.IsShift("time") {
 		rule.execTime()
 	}
 }

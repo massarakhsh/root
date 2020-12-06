@@ -4,10 +4,9 @@ import * as root from './root.js';
 const ce = React.createElement;
 
 export function script_start() {
-    core.clearStack();
-    const elm = new root.ElmRoot(document.location.pathname);
+    const elm = new root.ElmRoot(0, null, document.location.pathname);
     ReactDOM.render(
-        ce("div", null, elm.show()),
+        ce("div", null, elm.render()),
         document.querySelector('#root')
     );
 }
