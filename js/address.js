@@ -3,12 +3,22 @@ import * as core from './core.js';
 const ce = React.createElement;
 
 export class ElmAddress extends core.ElmStack {
-    constructor(level, props, path) {
-        super(level, "address", props, path);
+    main = 'address';
+
+    constructor(props) {
+        super({ main: "address", ...props });
         this.build();
     }
 
     build() {
+    }
+
+    buildMenu() {
+        return [
+            { mode: 'root', title: 'Рут'},
+            { mode: 'address', title: 'Адреса'},
+            { mode: 'makar', title: 'Макар'},
+        ];
     }
 
     showBody() {

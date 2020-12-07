@@ -3,24 +3,18 @@ const ce = React.createElement;
 export const stackElms = [];
 
 export class ElmStack extends React.Component {
+    main = null;
     elmBody = null;
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = this.toPath(props.path);
         const level = props.level;
         if (level < stackElms.length) {
             stackElms.splice(level, stackElms.length - level);
         }
         if (level == stackElms.length) {
             stackElms.push(this);
-        }
-        if (props.path) {
-            const match = /^\/?([^\/]+)(.*)/.exec(props.path);
-            if (match) {
-                this.state.mode = match[1];
-                this.state.path = match[2];
-            }
         }
     }
 
@@ -30,26 +24,25 @@ export class ElmStack extends React.Component {
             const props = {
                 level: this.props.level,
                 mode: this.state.mode,
-                doBuildMenu: this.buildMenu,
-                doSetMenu: this.setMenu,
             };
-            content.push(ce("thead", null,
+            content.push(ce("thead", {key: "head"},
                 ce("tr", null, ce("td", null, ce(ElmStackMenu, props)))
             ));
         }
         this.elmBody = this.showBody();
         if (this.elmBody) {
-            content.push(ce("tbody", null, ce("tr", null, ce("td", null, this.elmBody))));
+            content.push(ce("tbody", {key: "body"},
+                ce("tr", null, ce("td", null, this.elmBody))));
         }
         return ce("table", { className: "page" }, content);
     }
 
-    setPath(path) {
+    toPath(path) {
         let loc = {};
-        const match = /^\/?([^\/]+)(.*)/.exec(props.path);
+        const match = /^\/?([^\/]+)(.*)/.exec(path);
         if (match) {
-            this.state.mode = match[1];
-            this.state.path = match[2];
+            loc.mode = match[1];
+            loc.path = match[2];
         }
         return loc;
     }
@@ -59,6 +52,7 @@ export class ElmStack extends React.Component {
     }
 
     setMenu(mode) {
+        this.setPath('/'+mode);
         return mode;
     }
 
@@ -69,12 +63,23 @@ export class ElmStack extends React.Component {
         return null;
     }
 
+    setPath(path) {
+        let state = { mode: this.state.mode, path: this.state.path };
+        const loc = this.toPath(path);
+        if (state.mode != loc.mode || state.path != loc.path) {
+            state.mode = loc.mode;
+            state.path = loc.path;
+            this.setState(state);
+            //this.state = state;
+        }
+    }
+
     isLeaf() {
         return this.props.level + 1 >= stackElms.length;
     }
 
     getPath() {
-        let path = (this.props.level > 0) ? stackElms[this.props.level - 1].getPath() + "/" + this.props.main : "";
+        let path = (this.props.level > 0) ? stackElms[this.props.level - 1].getPath() + "/" + this.main : "";
         if (this.props.level + 1 >= stackElms.length && this.state.mode) {
             path += "/" + this.state.mode;
         }
@@ -90,21 +95,18 @@ export class ElmStackMenu extends React.Component {
 
     render() {
         const row = [];
-        const build = this.props.doBuildMenu;
-        if (build) {
-            const items = build();
-            if (items) {
-                for (let item of items) {
-                    let options = {className: "menu"};
-                    if (item.mode) {
-                        options.onClick = (e) => this.selMenu(item.mode);
-                        if (item.mode == this.state.mode) {
-                            options.className += ' menusel';
-                        }
+        const items = this.getParent().buildMenu();
+        if (items) {
+            for (let item of items) {
+                let options = {className: "menu"};
+                if (item.mode) {
+                    options.onClick = (e) => this.selMenu(item.mode);
+                    if (item.mode == this.state.mode) {
+                        options.className += ' menusel';
                     }
-                    let td = ce("td", options, item.title);
-                    row.push(td);
                 }
+                let td = ce("td", options, item.title);
+                row.push(td);
             }
         }
         row.push(ce("td", { width: '100%' }));
@@ -120,10 +122,12 @@ export class ElmStackMenu extends React.Component {
         );
     }
 
+    getParent() {
+        return stackElms[this.props.level];
+    }
+
     selMenu(mode) {
-        if (this.props.doSetMenu) {
-            mode = this.props.doSetMenu(mode);
-        }
+        mode = this.getParent().setMenu(mode);
         this.setState({mode: mode});
     }
 
