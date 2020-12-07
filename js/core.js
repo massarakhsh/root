@@ -3,27 +3,24 @@ const ce = React.createElement;
 export const stackElms = [];
 
 export class ElmStack extends React.Component {
-    level = null;
-    main = null;
-    path = null;
-    elmMenu = null;
-    domBody = null;
+    elmBody = null;
 
-    constructor(level, main, props, path) {
+    constructor(props) {
         super(props);
         this.state = {};
-        this.level = level;
-        this.main = main;
+        const level = props.level;
         if (level < stackElms.length) {
             stackElms.splice(level, stackElms.length - level);
         }
         if (level == stackElms.length) {
             stackElms.push(this);
         }
-        const match = /^\/?([^\/]+)(.*)/.exec(path);
-        if (match) {
-            this.state.mode = match[1];
-            this.path = match[2];
+        if (props.path) {
+            const match = /^\/?([^\/]+)(.*)/.exec(props.path);
+            if (match) {
+                this.state.mode = match[1];
+                this.state.path = match[2];
+            }
         }
     }
 
@@ -31,22 +28,30 @@ export class ElmStack extends React.Component {
         const content = [];
         if (this.buildMenu()) {
             const props = {
-                level: this.level,
-                build: this.buildMenu,
-                set: this.setMenu,
+                level: this.props.level,
                 mode: this.state.mode,
+                doBuildMenu: this.buildMenu,
+                doSetMenu: this.setMenu,
             };
             content.push(ce("thead", null,
                 ce("tr", null, ce("td", null, ce(ElmStackMenu, props)))
             ));
-        } else {
-            this.elmMenu = null;
         }
-        this.domBody = this.showBody();
-        if (this.domBody) {
-            content.push(ce("tbody", null, ce("tr", null, ce("td", null, this.domBody))));
+        this.elmBody = this.showBody();
+        if (this.elmBody) {
+            content.push(ce("tbody", null, ce("tr", null, ce("td", null, this.elmBody))));
         }
         return ce("table", { className: "page" }, content);
+    }
+
+    setPath(path) {
+        let loc = {};
+        const match = /^\/?([^\/]+)(.*)/.exec(props.path);
+        if (match) {
+            this.state.mode = match[1];
+            this.state.path = match[2];
+        }
+        return loc;
     }
 
     buildMenu() {
@@ -54,24 +59,23 @@ export class ElmStack extends React.Component {
     }
 
     setMenu(mode) {
-        alert(mode);
-        return true;
+        return mode;
     }
 
     showBody() {
         if (!this.isLeaf()) {
-            return stackElms[this.level + 1].render();
+            return stackElms[this.props.level + 1].render();
         }
         return null;
     }
 
     isLeaf() {
-        return this.level + 1 >= stackElms.length;
+        return this.props.level + 1 >= stackElms.length;
     }
 
     getPath() {
-        let path = (this.level > 0) ? stackElms[this.level - 1].getPath() + "/" + this.main : "";
-        if (this.level + 1 >= stackElms.length && this.state.mode) {
+        let path = (this.props.level > 0) ? stackElms[this.props.level - 1].getPath() + "/" + this.props.main : "";
+        if (this.props.level + 1 >= stackElms.length && this.state.mode) {
             path += "/" + this.state.mode;
         }
         return path;
@@ -86,7 +90,7 @@ export class ElmStackMenu extends React.Component {
 
     render() {
         const row = [];
-        const build = this.props.build;
+        const build = this.props.doBuildMenu;
         if (build) {
             const items = build();
             if (items) {
@@ -117,11 +121,10 @@ export class ElmStackMenu extends React.Component {
     }
 
     selMenu(mode) {
-        if (!this.props.set) {
-            this.setState({mode: mode});
-        } else if (this.props.set(mode)) {
-            this.setState({mode: mode});
+        if (this.props.doSetMenu) {
+            mode = this.props.doSetMenu(mode);
         }
+        this.setState({mode: mode});
     }
 
     showMenuTime() {

@@ -4,16 +4,16 @@ import * as address from './address.js';
 const ce = React.createElement;
 
 export class ElmRoot extends core.ElmStack {
-    constructor(level, props, path) {
-        super(level, "root", props, path);
+    constructor(props) {
+        super({ main: "root", ...props });
         this.build();
     }
 
     build() {
         if (this.state.mode == 'root') {
-            new ElmRoot(this.level+1, null, this.path);
+            new ElmRoot({ level: this.props.level+1, path: this.state.path });
         } else if (this.state.mode == 'address') {
-            new address.ElmAddress(this.level+1, null, this.path);
+            new address.ElmAddress({ level: this.level+1, path: this.state.path});
         }
     }
 
@@ -24,16 +24,20 @@ export class ElmRoot extends core.ElmStack {
         ];
     }
 
+    setMenu(mode) {
+        return mode;
+    }
+
     showBody() {
         if (this.isLeaf()) {
-            return ce("div", null, ce(DomRoot));
+            return ce(BodyRoot, null);
         } else {
             return super.showBody();
         }
     }
 }
 
-class DomRoot extends React.Component {
+class BodyRoot extends React.Component {
     constructor(props) {
         super(props);
         this.state = { liked: false };
