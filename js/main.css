@@ -72,3 +72,12 @@ table.windowbox {
     padding: 1px 8px;
 }
 
+table.boxaddr {
+    width: 100%;
+}
+
+table.boxaddr td {
+    border: 1px solid #bbb;
+    text-align: center;
+    vertical-align: center;
+}

@@ -19,8 +19,9 @@ export class ElmRoot extends core.ElmStack {
     setCommand(cmd) {
         if (cmd == 'root' || cmd == 'address') {
             this.setPath('/' + cmd);
+            return cmd;
         }
-        return cmd;
+        return super.setCommand(cmd);
     }
 
     showBody() {

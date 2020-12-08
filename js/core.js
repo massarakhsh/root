@@ -38,10 +38,12 @@ export class ElmStack extends React.Component {
 
     toPath(path) {
         let loc = {};
-        const match = /^\/?([^\/]+)(.*)/.exec(path);
-        if (match) {
-            loc.mode = match[1];
-            loc.path = match[2];
+        if (path) {
+            const match = /^\/?([^\/]+)(.*)/.exec(path);
+            if (match) {
+                loc.mode = match[1];
+                loc.path = match[2];
+            }
         }
         return loc;
     }
@@ -53,8 +55,11 @@ export class ElmStack extends React.Component {
     setCommand(cmd) {
         if (cmd == 'exit') {
             if (this.props.level > 0) {
-
+                stackElms[this.props.level - 1].setPath(null);
+            } else {
+                window.close();
             }
+            return null;
         }
         return cmd;
     }
@@ -211,17 +216,6 @@ export class WindowBox extends React.Component {
             ce("thead", null, ce("tr", null, ce("td", null, title))),
             ce("tbody", null, ce("tr", null, ce("td", null, body))),
         )
-    }
-}
-
-export function getListServer(table, callb) {
-    const inter = { answer: table, callb: callb };
-    get_data_proc('/front/list/' + table, answerServer, inter);
-}
-
-function answerServer(inter, lika) {
-    if (lika && lika.answer) {
-        inter.callb(lika.answer);
     }
 }
 

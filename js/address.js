@@ -4,6 +4,7 @@ const ce = React.createElement;
 
 export class ElmAddress extends core.ElmStack {
     main = 'address';
+    listZone = null;
 
     constructor(props) {
         super(props);
@@ -18,22 +19,29 @@ export class ElmAddress extends core.ElmStack {
     }
 
     setCommand(cmd) {
-        return cmd;
+        return super.setCommand(cmd);
     }
 
     showBody() {
         return ce("div", null, this.showCommon());
     }
 
+    componentDidMount() {
+
+    }
+
     showCommon() {
-        if (true) {
-            return this.showCommonMap()
+        if (this.listZone) {
+            return this.showCommonMap();
         } else {
-            //core.getListServer('IPZone', function(list) {
-            //    this.dias = list;
-            //});
+            getListZone(this);
             return 'Loading...';
         }
+    }
+
+    storeListZone(list) {
+        this.listZone = list;
+        this.forceUpdate();
     }
 
     showCommonMap() {
@@ -41,21 +49,31 @@ export class ElmAddress extends core.ElmStack {
         let leftSize = 0;
         let right = [];
         let rightSize = 0;
-        const listDia = [["192168000000",24], ["192168230000",24], ["192168231000",26], ["192168232000",27], ["192168233000",28]];
-        for (const dia of listDia) {
-            let addr = dia[0];
-            let bits = dia[1];
-            if (bits < 24) bits = 24;
-            else if (bits > 32) bits = 32;
-            let volume = 1 << (32-bits);
-            let nline = Math.ceil(volume / 16);
-            const sho = this.showDia(addr, volume);
-            if (leftSize <= rightSize) {
-                left.push(sho);
-                leftSize += 1 + nline;
-            } else {
-                right.push(sho);
-                rightSize += 1 + nline;
+        if (this.listZone) {
+            this.listZone.sort((prev, next) => {
+                if (prev.Bit < next.Bit) return -1;
+                if (prev.Bit > next.Bit) return 1;
+                if (prev.IP < next.IP) return -1;
+                if (prev.IP > next.IP) return 1;
+                return 0;
+            });
+            for (const dia of this.listZone) {
+                if ((dia.Roles&0x4) == 0) {
+                    let addr = dia.IP;
+                    let bit = dia.Bit;
+                    if (bit < 24) bit = 24;
+                    else if (bit > 32) bit = 32;
+                    let volume = 1 << (32 - bit);
+                    let nline = Math.ceil(volume / 16);
+                    const sho = this.showDia(addr, nline, volume);
+                    if (leftSize <= rightSize) {
+                        left.push(sho);
+                        leftSize += 1 + nline;
+                    } else {
+                        right.push(sho);
+                        rightSize += 1 + nline;
+                    }
+                }
             }
         }
         return ce("table", { className: "page" },
@@ -66,11 +84,39 @@ export class ElmAddress extends core.ElmStack {
         )
     }
 
-    showDia(address, volume) {
-        let title = 'Адреса ' + core.ipToShow(address);
-        let body = 'Объем: ' + core.ipFromShow(core.ipToShow(address));
+    showDia(address, nline, volume) {
+        const title = 'Адреса ' + core.ipToShow(address);
+        const match = /^(\d\d\d)(\d\d\d)(\d\d\d)(\d\d\d)$/.exec(address);
+        const ip13 = match[1] + match[2] +match[3];
+        const ip4 = Number(match[4]);
+        const ipline = (ip4 - ip4%16) / 16;
+        const rows = [];
+        for (let nr=0; nr < nline; nr++) {
+            const cells = [];
+            for (let nc=0; nc < 16; nc++) {
+                const ips = (nr + ipline) * 16 + nc;
+                cells.push(this.showIP(ip13, ips))
+            }
+            rows.push(ce('tr', null, ...cells));
+        }
+        let body = ce('table', {className: 'boxaddr'},
+                        ce('tbody', null, ...rows));
         let props = { cls: "wide", title: title, body: body };
         return ce(core.WindowBox, props);
     }
+
+    showIP(ip13, ips) {
+        return ce('td', null, ips)
+    }
 }
+
+export function getListZone(elm) {
+    get_data_proc('/front/list/IPZone',
+        function (elm, lika) {
+            if (lika && lika.answer) {
+                elm.storeListZone(lika.answer);
+            }
+        }, elm);
+}
+
 
