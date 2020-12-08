@@ -1,7 +1,6 @@
+import {ce} from './core.js';
 import * as core from './core.js';
 import * as root from './root.js';
-
-const ce = React.createElement;
 
 export function script_start() {
     ReactDOM.render(

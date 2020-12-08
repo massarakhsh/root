@@ -6,36 +6,32 @@ export class ElmAddress extends core.ElmStack {
     main = 'address';
 
     constructor(props) {
-        super({ main: "address", ...props });
-        this.build();
-    }
-
-    build() {
+        super(props);
     }
 
     buildMenu() {
         return [
-            { mode: 'root', title: 'Рут'},
-            { mode: 'address', title: 'Адреса'},
-            { mode: 'makar', title: 'Макар'},
+            { cmd: 'root', title: 'Рут'},
+            { cmd: 'address', title: 'Адреса'},
+            { cmd: 'makar', title: 'Макар'},
         ];
     }
 
+    setCommand(cmd) {
+        return cmd;
+    }
+
     showBody() {
-        if (this.isLeaf()) {
-            return ce("div", null, this.showCommon());
-        } else {
-            return super.showInfo();
-        }
+        return ce("div", null, this.showCommon());
     }
 
     showCommon() {
-        if (this.dias || true) {
+        if (true) {
             return this.showCommonMap()
         } else {
-            core.getListServer('IPZone', function(list) {
-                this.dias = list;
-            });
+            //core.getListServer('IPZone', function(list) {
+            //    this.dias = list;
+            //});
             return 'Loading...';
         }
     }

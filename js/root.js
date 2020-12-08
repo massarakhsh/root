@@ -1,7 +1,6 @@
+import {ce} from './core.js';
 import * as core from './core.js';
 import * as address from './address.js';
-
-const ce = React.createElement;
 
 export class ElmRoot extends core.ElmStack {
     main = 'root';
@@ -12,16 +11,23 @@ export class ElmRoot extends core.ElmStack {
 
     buildMenu() {
         return [
-            { mode: 'root', title: 'Рут'+this.props.level},
-            { mode: 'address', title: 'Адреса'},
+            { cmd: 'root', title: 'Рут'+this.props.level},
+            { cmd: 'address', title: 'Адреса'},
         ];
+    }
+
+    setCommand(cmd) {
+        if (cmd == 'root' || cmd == 'address') {
+            this.setPath('/' + cmd);
+        }
+        return cmd;
     }
 
     showBody() {
         if (this.state.mode == 'root') {
             return ce(ElmRoot,{ level: this.props.level+1, path: this.state.path });
         } else if (this.state.mode == 'address') {
-            return ce(address.ElmAddress, { level: this.level+1, path: this.state.path });
+            return ce(address.ElmAddress, { level: this.props.level+1, path: this.state.path });
         } else {
             return ce(BodyRoot, null);
         }

@@ -1,5 +1,4 @@
-const ce = React.createElement;
-
+export const ce = React.createElement;
 export const stackElms = [];
 
 export class ElmStack extends React.Component {
@@ -51,9 +50,13 @@ export class ElmStack extends React.Component {
         return null;
     }
 
-    setMenu(mode) {
-        this.setPath('/'+mode);
-        return mode;
+    setCommand(cmd) {
+        if (cmd == 'exit') {
+            if (this.props.level > 0) {
+
+            }
+        }
+        return cmd;
     }
 
     showBody() {
@@ -70,7 +73,6 @@ export class ElmStack extends React.Component {
             state.mode = loc.mode;
             state.path = loc.path;
             this.setState(state);
-            //this.state = state;
         }
     }
 
@@ -99,9 +101,9 @@ export class ElmStackMenu extends React.Component {
         if (items) {
             for (let item of items) {
                 let options = {className: "menu"};
-                if (item.mode) {
-                    options.onClick = (e) => this.selMenu(item.mode);
-                    if (item.mode == this.state.mode) {
+                if (item.cmd) {
+                    options.onClick = (e) => this.setCommand(item.cmd);
+                    if (item.cmd == this.state.mode) {
                         options.className += ' menusel';
                     }
                 }
@@ -126,9 +128,11 @@ export class ElmStackMenu extends React.Component {
         return stackElms[this.props.level];
     }
 
-    selMenu(mode) {
-        mode = this.getParent().setMenu(mode);
-        this.setState({mode: mode});
+    setCommand(cmd) {
+        const mode = this.getParent().setCommand(cmd);
+        if (mode) {
+            this.setState({mode: mode});
+        }
     }
 
     showMenuTime() {
@@ -137,8 +141,8 @@ export class ElmStackMenu extends React.Component {
     }
 
     showMenuExit() {
-        let options = { id: 'menutime', onClick: () => get_data_part('/front/exit') };
-        return ce("b", options, "xx:xx")
+        let options = { src: '/images/menuexit.png', onClick: () => this.setCommand('exit') };
+        return ce("img", options)
     }
 }
 
