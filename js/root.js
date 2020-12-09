@@ -11,27 +11,25 @@ export class ElmRoot extends core.ElmStack {
 
     buildMenu() {
         return [
-            { cmd: 'root', title: 'Рут'+this.props.level},
+            { cmd: 'unit', title: 'Узлы'},
             { cmd: 'address', title: 'Адреса'},
         ];
     }
 
-    setCommand(cmd) {
-        if (cmd == 'root' || cmd == 'address') {
-            this.setPath('/' + cmd);
-            return cmd;
-        }
-        return super.setCommand(cmd);
-    }
-
     showBody() {
-        if (this.state.mode == 'root') {
-            return ce(ElmRoot,{ level: this.props.level+1, path: this.state.path });
-        } else if (this.state.mode == 'address') {
+        if (this.state.mode == 'address') {
             return ce(address.ElmAddress, { level: this.props.level+1, path: this.state.path });
         } else {
             return ce(BodyRoot, null);
         }
+    }
+
+    setCommand(cmd) {
+        if (cmd.match(/address/)) {
+            this.setPath('/' + cmd);
+            return cmd;
+        }
+        return super.setCommand(cmd);
     }
 }
 

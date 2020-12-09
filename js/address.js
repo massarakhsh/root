@@ -1,13 +1,17 @@
 import * as core from './core.js';
+import * as data from './data.js';
 
 const ce = React.createElement;
 
 export class ElmAddress extends core.ElmStack {
     main = 'address';
-    listZone = null;
 
     constructor(props) {
         super(props);
+    }
+
+    showBody() {
+        return ce(BodyAddress, { level: this.props.level });
     }
 
     buildMenu() {
@@ -22,25 +26,29 @@ export class ElmAddress extends core.ElmStack {
         return super.setCommand(cmd);
     }
 
-    showBody() {
-        return ce("div", null, this.showCommon());
-    }
-
     componentDidMount() {
-
     }
 
-    showCommon() {
+}
+
+class BodyAddress extends React.Component {
+    listZone = null;
+
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
         if (this.listZone) {
             return this.showCommonMap();
         } else {
-            getListZone(this);
-            return 'Loading...';
+            data.getServerData('/front/list/IPZone', this);
+            return ce('i', null, 'Загрузка ...');
         }
     }
 
-    storeListZone(list) {
-        this.listZone = list;
+    setServerData(path, list) {
+        this.listZone = list.answer;
         this.forceUpdate();
     }
 
@@ -65,7 +73,7 @@ export class ElmAddress extends core.ElmStack {
                     else if (bit > 32) bit = 32;
                     let volume = 1 << (32 - bit);
                     let nline = Math.ceil(volume / 16);
-                    const sho = this.showDia(addr, nline, volume);
+                    const sho = ce(BodyIPZone, { ip: addr, bit: bit })
                     if (leftSize <= rightSize) {
                         left.push(sho);
                         leftSize += 1 + nline;
@@ -83,8 +91,18 @@ export class ElmAddress extends core.ElmStack {
             )),
         )
     }
+}
 
-    showDia(address, nline, volume) {
+class BodyIPZone extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const address = this.props.ip;
+        const bit = this.props.bit;
+        let volume = 1 << (32 - bit);
+        let nline = Math.ceil(volume / 16);
         const title = 'Адреса ' + core.ipToShow(address);
         const match = /^(\d\d\d)(\d\d\d)(\d\d\d)(\d\d\d)$/.exec(address);
         const ip13 = match[1] + match[2] +match[3];
@@ -100,7 +118,7 @@ export class ElmAddress extends core.ElmStack {
             rows.push(ce('tr', null, ...cells));
         }
         let body = ce('table', {className: 'boxaddr'},
-                        ce('tbody', null, ...rows));
+            ce('tbody', null, ...rows));
         let props = { cls: "wide", title: title, body: body };
         return ce(core.WindowBox, props);
     }
@@ -109,14 +127,4 @@ export class ElmAddress extends core.ElmStack {
         return ce('td', null, ips)
     }
 }
-
-export function getListZone(elm) {
-    get_data_proc('/front/list/IPZone',
-        function (elm, lika) {
-            if (lika && lika.answer) {
-                elm.storeListZone(lika.answer);
-            }
-        }, elm);
-}
-
 

@@ -3,6 +3,7 @@ export const stackElms = [];
 
 export class ElmStack extends React.Component {
     main = null;
+    elmMenu = null;
     elmBody = null;
 
     constructor(props) {
@@ -19,33 +20,31 @@ export class ElmStack extends React.Component {
 
     render() {
         const content = [];
-        if (this.buildMenu()) {
-            const props = {
-                level: this.props.level,
-                mode: this.state.mode,
-            };
+        this.elmMenu = this.showMenu();
+        if (this.elmMenu) {
             content.push(ce("thead", {key: "head"},
-                ce("tr", null, ce("td", null, ce(ElmStackMenu, props)))
+                ce("tr", null, ce("td", null, this.elmMenu))
             ));
         }
         this.elmBody = this.showBody();
         if (this.elmBody) {
             content.push(ce("tbody", {key: "body"},
-                ce("tr", null, ce("td", null, this.elmBody))));
+                ce("tr", null, ce("td", null, this.elmBody))
+            ));
         }
         return ce("table", { className: "page" }, content);
     }
 
-    toPath(path) {
-        let loc = {};
-        if (path) {
-            const match = /^\/?([^\/]+)(.*)/.exec(path);
-            if (match) {
-                loc.mode = match[1];
-                loc.path = match[2];
-            }
-        }
-        return loc;
+    showMenu() {
+        const props = {
+            level: this.props.level,
+            mode: this.state.mode,
+        };
+        return ce(ElmStackMenu, props)
+    }
+
+    showBody() {
+        return null;
     }
 
     buildMenu() {
@@ -64,13 +63,6 @@ export class ElmStack extends React.Component {
         return cmd;
     }
 
-    showBody() {
-        if (!this.isLeaf()) {
-            return stackElms[this.props.level + 1].render();
-        }
-        return null;
-    }
-
     setPath(path) {
         let state = { mode: this.state.mode, path: this.state.path };
         const loc = this.toPath(path);
@@ -79,6 +71,18 @@ export class ElmStack extends React.Component {
             state.path = loc.path;
             this.setState(state);
         }
+    }
+
+    toPath(path) {
+        let loc = {};
+        if (path) {
+            const match = /^\/?([^\/]+)(.*)/.exec(path);
+            if (match) {
+                loc.mode = match[1];
+                loc.path = match[2];
+            }
+        }
+        return loc;
     }
 
     isLeaf() {
@@ -149,6 +153,10 @@ export class ElmStackMenu extends React.Component {
         let options = { src: '/images/menuexit.png', onClick: () => this.setCommand('exit') };
         return ce("img", options)
     }
+}
+
+export function getStackElm(level) {
+    return stackElms[level];
 }
 
 export function getStackPath() {
