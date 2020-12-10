@@ -74,6 +74,7 @@ table.windowbox {
 
 table.boxaddr {
     width: 100%;
+    background: #ddd;
 }
 
 table.boxaddr td {
@@ -82,3 +83,17 @@ table.boxaddr td {
     vertical-align: center;
     font-size: 9pt;
 }
+
+.ipempty {
+    color: #999;
+}
+
+.iponline {
+    color: #00c;
+    background: #fff;
+}
+
+.menuTime {
+    color: #ded;
+}
+

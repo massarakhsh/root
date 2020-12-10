@@ -42,13 +42,13 @@ class BodyAddress extends React.Component {
         if (this.listZone) {
             return this.showCommonMap();
         } else {
-            data.getServerData('/front/list/IPZone', this);
+            data.getServerData('/api/list/IPZone', this);
             return ce('i', null, 'Загрузка ...');
         }
     }
 
     setServerData(path, list) {
-        this.listZone = list.answer;
+        this.listZone = list.IPZone;
         this.forceUpdate();
     }
 
@@ -112,8 +112,8 @@ class BodyIPZone extends React.Component {
         for (let nr=0; nr < nline; nr++) {
             const cells = [];
             for (let nc=0; nc < 16; nc++) {
-                const ips = (nr + ipline) * 16 + nc;
-                cells.push(this.showIP(ip13, ips))
+                const ips = ip13 + core.int3((nr + ipline) * 16 + nc);
+                cells.push(ce('td', null, ce(BodyIPElm, { ip: ips })));
             }
             rows.push(ce('tr', null, ...cells));
         }
@@ -122,9 +122,26 @@ class BodyIPZone extends React.Component {
         let props = { cls: "wide", title: title, body: body };
         return ce(core.WindowBox, props);
     }
+}
 
-    showIP(ip13, ips) {
-        return ce('td', null, ips)
+class BodyIPElm extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        let adr = this.props.ip;
+        let sets = {};
+        const match = /^(\d\d\d)(\d\d\d)(\d\d\d)(\d\d\d)$/.exec(adr);
+        if (match) {
+            adr = Number(match[4]);
+        }
+        if ((adr&0x1) == 1) {
+            sets.className = 'iponline';
+        } else {
+            sets.className = 'ipempty';
+        }
+        return ce('div', sets, adr);
     }
 }
 

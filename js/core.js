@@ -1,3 +1,5 @@
+//import * as react from '../lib/react.js';
+
 export const ce = React.createElement;
 export const stackElms = [];
 
@@ -145,13 +147,86 @@ export class ElmStackMenu extends React.Component {
     }
 
     showMenuTime() {
-        let options = { id: 'menutime', onClick: () => get_data_part('/front/time') };
-        return ce("b", options, "xx:xx")
+        //let options = { id: 'menutime', onClick: () => get_data_part('/front/time') };
+        //return ce("b", options, "xx:xx")
+        return ce(MenuTime)
     }
 
     showMenuExit() {
         let options = { src: '/images/menuexit.png', onClick: () => this.setCommand('exit') };
         return ce("img", options)
+    }
+}
+
+export class WindowMenu extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { mode: '' };
+    }
+
+    render() {
+    }
+}
+
+export class MenuTime extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = this.calc();
+    }
+
+    componentDidMount() {
+        this.intervalID = setInterval(() => this.tick(), 250);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.intervalID);
+    }
+
+    render() {
+        let hour = this.state.date.getHours();
+        if (hour < 10) hour = '0' + hour;
+        let dots = (this.state.dots) ? ':' : ' ';
+        let minute = this.state.date.getMinutes();
+        if (minute < 10) minute = '0' + minute;
+        return ce('b', { className: 'menuTime' }, hour + dots + minute);
+    }
+
+    calc() {
+        const date = new Date();
+        return {
+            date: date,
+            dots: (date.getSeconds() % 2) == 0,
+        };
+    }
+
+    tick() {
+        this.setState(this.calc());
+    }
+}
+
+
+export class WindowBox extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        let cls = 'windowbox';
+        if (this.props.cls) {
+            cls += ' ' + this.props.cls;
+        }
+        let title = "";
+        if (this.props.title) {
+            title = this.props.title;
+        }
+        let body = "";
+        if (this.props.body) {
+            body = this.props.body;
+        }
+        return ce("table", { className: cls },
+            ce("thead", null, ce("tr", null, ce("td", null, title))),
+            ce("tbody", null, ce("tr", null, ce("td", null, body))),
+        )
     }
 }
 
@@ -176,54 +251,20 @@ export function ipFromShow(ip) {
     if (match) {
         let vp = '';
         for (let g = 1; g <= 4; g++) {
-            let p = match[g];
-            if (p < 10) {
-                vp += '00' + p;
-            } else if (p < 100) {
-                vp += '0' + p;
-            } else if (p <= 255) {
-                vp += p;
-            } else {
-                return ip;
-            }
+            vp += int3(match[g]);
         }
         ip = vp;
     }
     return ip;
 }
 
-export class WindowMenu extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { mode: '' };
-    }
-
-    render() {
-    }
-}
-
-export class WindowBox extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        let cls = 'windowbox';
-        if (this.props.cls) {
-            cls += ' ' + this.props.cls;
-        }
-        let title = "";
-        if (this.props.title) {
-            title = this.props.title;
-        }
-        let body = "";
-        if (this.props.body) {
-            body = this.props.body;
-        }
-        return ce("table", { className: cls },
-            ce("thead", null, ce("tr", null, ce("td", null, title))),
-            ce("tbody", null, ce("tr", null, ce("td", null, body))),
-        )
+export function int3(i) {
+    if (i < 10) {
+        return '00' + i;
+    } else if (i < 100) {
+        return '0' + i;
+    } else {
+        return i;
     }
 }
 

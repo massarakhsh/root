@@ -1,4 +1,6 @@
 
+
+
 export function getServerData(path, elm) {
     get_data_proc(path,
         function (elm, lika) {

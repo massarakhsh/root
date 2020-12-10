@@ -11,11 +11,11 @@ func (rule *DataRule) Execute() lik.Seter {
 }
 
 func (rule *DataRule) execute() {
-	if rule.IsShift("list") {
-		rule.apiList(rule.Shift())
-	} else if rule.IsShift("time") {
-		rule.execTime()
-	}
+	//if rule.IsShift("list") {
+	//	rule.apiList(rule.Shift())
+	//} else if rule.IsShift("time") {
+	//	rule.execTime()
+	//}
 }
 
 func (rule *DataRule) execTime() {

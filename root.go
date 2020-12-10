@@ -99,7 +99,11 @@ func router(w http.ResponseWriter, r *http.Request) {
 	if !lik.RegExCompare(r.RequestURI, "marshal") {
 		lik.SayInfo(r.RequestURI)
 	}
-	if rule.IsShift("front") {
+	if rule.IsShift("api") {
+		json := rule.ApiExecute()
+		likapi.RouteCookies(w, rule.GetAllCookies())
+		likapi.RouteJson(w, 200, json, false)
+	} else if rule.IsShift("front") {
 		json := rule.Execute()
 		likapi.RouteCookies(w, rule.GetAllCookies())
 		likapi.RouteJson(w, 200, json, false)

@@ -25,7 +25,7 @@ export class ElmRoot extends core.ElmStack {
     }
 
     setCommand(cmd) {
-        if (cmd.match(/address/)) {
+        if (cmd.match(/^(unit|address)$/)) {
             this.setPath('/' + cmd);
             return cmd;
         }

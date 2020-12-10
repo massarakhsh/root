@@ -11,8 +11,8 @@ func (rule *DataRule) ShowPage() likdom.Domer {
 		head.BuildString("<meta http-equiv=\"Content-Language\" content=\"ru\">")
 		head.BuildString("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">")
 		head.BuildString("<script type='text/javascript' src='/lib/jquery.js'></script>")
-		head.BuildString("<script type='text/javascript' src='https://unpkg.com/react@16/umd/react.development.js'></script>")
-		head.BuildString("<script type='text/javascript' src='https://unpkg.com/react-dom@16/umd/react-dom.development.js'></script>")
+		head.BuildString("<script type='text/javascript' src='/lib/react.js'></script>")
+		head.BuildString("<script type='text/javascript' src='/lib/react-dom.js'></script>")
 		head.BuildString("<script type='text/javascript' src='/js/lik.js'></script>")
 		head.BuildString("<link rel='stylesheet' href='/js/main.css'/>")
 	}
