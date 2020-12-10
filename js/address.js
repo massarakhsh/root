@@ -112,7 +112,7 @@ class BodyIPZone extends React.Component {
         for (let nr=0; nr < nline; nr++) {
             const cells = [];
             for (let nc=0; nc < 16; nc++) {
-                const ips = ip13 + core.int3((nr + ipline) * 16 + nc);
+                const ips = ip13 + core.int3str((nr + ipline) * 16 + nc);
                 cells.push(ce('td', null, ce(BodyIPElm, { ip: ips })));
             }
             rows.push(ce('tr', null, ...cells));

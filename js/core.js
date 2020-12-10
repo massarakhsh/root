@@ -251,14 +251,14 @@ export function ipFromShow(ip) {
     if (match) {
         let vp = '';
         for (let g = 1; g <= 4; g++) {
-            vp += int3(match[g]);
+            vp += int3str(match[g]);
         }
         ip = vp;
     }
     return ip;
 }
 
-export function int3(i) {
+export function int3str(i) {
     if (i < 10) {
         return '00' + i;
     } else if (i < 100) {
