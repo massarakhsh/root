@@ -1,6 +1,7 @@
-let DataIndex = 0;
-let DataTables = {};
-let DataReady = false;
+let dataIndex = 0;
+let dataTables = {};
+let dataReady = false;
+let upId = 0;
 
 class DataTable {
     table = null;
@@ -13,12 +14,30 @@ class DataTable {
 }
 
 export function initialize() {
-    DataReady = false;
-    DataIndex = 0;
-    DataTables = {};
-    DataTables['IPZone'] = new DataTable('IPZone');
-    DataTables['IP'] = new DataTable('IP');
-    DataTables['Unit'] = new DataTable('Unit');
+    dataReady = false;
+    dataIndex = 0;
+    dataTables = {};
+    dataTables['IPZone'] = new DataTable('IPZone');
+    dataTables['IP'] = new DataTable('IP');
+    dataTables['Unit'] = new DataTable('Unit');
+    requestTables();
+    if (!upId) {
+        upId = setInterval(requestTables, 5000);
+    }
+}
+
+function requestTables() {
+    get_data_proc('/api/marshal/' + dataIndex, updateTables, null);
+}
+
+function updateTables(parm, lika) {
+    if (lika) {
+        for (var key in lika) {
+            if (dataTables[key]) {
+                var val = lika[key];
+            }
+        }
+    }
 }
 
 export function getServerData(path, elm) {
