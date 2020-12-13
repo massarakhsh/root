@@ -51,6 +51,10 @@ table.menu {
     padding: 1px 4px;
 }
 
+.menu a {
+   cursor: pointer;
+}
+
 .menu td.menusel {
     background: #fff;
     border-bottom-color: #fff;
@@ -69,28 +73,44 @@ table.windowbox {
 
 .windowbox > tbody > tr > td {
     border: 1px solid #888;
-    padding: 1px 8px;
+    /*padding: 1px 8px;*/
 }
 
 table.boxaddr {
-    width: 100%;
     background: #ddd;
 }
 
 table.boxaddr td {
     border: 1px solid #bbb;
+    padding: 1px 2px;
     text-align: center;
     vertical-align: center;
-    font-size: 9pt;
+    font-size: 11pt;
 }
 
-.ipempty {
+.ipcell {
     color: #999;
 }
 
-.iponline {
-    color: #00c;
+.ipexist {
     background: #fff;
+}
+
+.ipused {
+    background: #cfc;
+}
+
+.ipon {
+    color: #00c;
+    font-weight: bold;
+}
+
+.ipoff {
+    color: #400;
+}
+
+.ipdyn {
+    background: #f88;
 }
 
 .menuTime {

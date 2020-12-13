@@ -112,13 +112,15 @@ export class ElmStackMenu extends React.Component {
         if (items) {
             for (let item of items) {
                 let options = {className: "menu"};
+                let title = item.title;
                 if (item.cmd) {
-                    options.onClick = (e) => this.setCommand(item.cmd);
+                    //options.onClick = (e) => this.setCommand(item.cmd);
                     if (item.cmd == this.state.mode) {
                         options.className += ' menusel';
                     }
+                    title = ce('a', { onClick: (e) => this.setCommand(item.cmd) }, title)
                 }
-                let td = ce("td", options, item.title);
+                let td = ce("td", options, title);
                 row.push(td);
             }
         }
@@ -155,16 +157,6 @@ export class ElmStackMenu extends React.Component {
     showMenuExit() {
         let options = { src: '/images/menuexit.png', onClick: () => this.setCommand('exit') };
         return ce("img", options)
-    }
-}
-
-export class WindowMenu extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { mode: '' };
-    }
-
-    render() {
     }
 }
 

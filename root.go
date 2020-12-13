@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"github.com/massarakhsh/lik"
 	"github.com/massarakhsh/lik/likapi"
+	"github.com/massarakhsh/root/base"
 	"github.com/massarakhsh/root/front"
-	"github.com/massarakhsh/root/one"
+	"github.com/massarakhsh/root/task/baser"
 	"log"
 	"net/http"
 	"os"
@@ -13,12 +14,6 @@ import (
 )
 
 var (
-	HttpPort = 80
-	HostServ = "192.168.234.62"
-	HostBase = "rptp"
-	HostUser = "rptp"
-	HostPass = "Shaman1961"
-	IsStoping	= false
 	DebugLevel	= 9
 )
 
@@ -28,32 +23,35 @@ func main() {
 	if !getArgs() {
 		return
 	}
-	if !one.OpenBase(HostServ, HostBase, HostUser, HostPass) {
+	if !base.OpenDB(base.HostServ, base.HostBase, base.HostUser, base.HostPass) {
 		return
 	}
+	baser.StartBaser()
+	baser.StartPinger()
+	baser.StartARP()
 	startHttp()
-	for !IsStoping {
+	for !base.IsStoping {
 		time.Sleep(time.Second)
 	}
-		time.Sleep(time.Second * 3)
+	time.Sleep(time.Second * 3)
 }
 
 func getArgs() bool {
 	args, ok := lik.GetArgs(os.Args[1:])
 	if val := args.GetString("port"); val != "" {
-		HttpPort = lik.StrToInt(val)
+		base.HttpPort = lik.StrToInt(val)
 	}
 	if val := args.GetString("serv"); val != "" {
-		HostServ = val
+		base.HostServ = val
 	}
 	if val := args.GetString("base"); val != "" {
-		HostBase = val
+		base.HostBase = val
 	}
 	if val := args.GetString("user"); val != "" {
-		HostUser = val
+		base.HostUser = val
 	}
 	if val := args.GetString("pass"); val != "" {
-		HostPass = val
+		base.HostPass = val
 	}
 	if val := args.GetString("debug"); val != "" {
 		DebugLevel = lik.StrToInt(val)
@@ -71,7 +69,7 @@ func getArgs() bool {
 
 func startHttp(){
 	http.HandleFunc("/", router)
-	if err := http.ListenAndServe(":"+fmt.Sprint(HttpPort), nil); err != nil {
+	if err := http.ListenAndServe(":"+fmt.Sprint(base.HttpPort), nil); err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }

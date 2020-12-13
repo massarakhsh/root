@@ -2,8 +2,7 @@ package front
 
 import (
 	"github.com/massarakhsh/lik"
-	"github.com/massarakhsh/root/data"
-	"github.com/massarakhsh/root/one"
+	"github.com/massarakhsh/root/base"
 )
 
 func (rule *DataRule) ApiExecute() lik.Seter {
@@ -18,17 +17,17 @@ func (rule *DataRule) ApiExecute() lik.Seter {
 }
 
 func (rule *DataRule) apiList(table string) {
-	list := one.GetList(table, "SysNum")
+	list := base.GetList(table)
 	rule.SetResponse(list, table)
 }
 
 func (rule *DataRule) apiGet(table string, sys lik.IDB) {
-	elm := one.GetElm(table, sys)
+	elm := base.GetElm(table, sys)
 	rule.SetResponse(elm, table)
 }
 
 func (rule *DataRule) apiMarshal(index int) {
-	answer := data.BuildMarshal(index)
+	answer := base.BuildMarshal(index)
 	for _,set := range answer.Values() {
 		rule.SetResponse(set.Val, set.Key)
 	}

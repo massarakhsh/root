@@ -54,9 +54,7 @@ class BodyAddress extends React.Component {
 
     showCommonMap() {
         let left = [];
-        let leftSize = 0;
         let right = [];
-        let rightSize = 0;
         if (this.listZone) {
             this.listZone.sort((prev, next) => {
                 if (prev.Bit < next.Bit) return -1;
@@ -71,15 +69,11 @@ class BodyAddress extends React.Component {
                     let bit = dia.Bit;
                     if (bit < 24) bit = 24;
                     else if (bit > 32) bit = 32;
-                    let volume = 1 << (32 - bit);
-                    let nline = Math.ceil(volume / 16);
                     const sho = ce(BodyIPZone, { ip: addr, bit: bit })
-                    if (leftSize <= rightSize) {
-                        left.push(sho);
-                        leftSize += 1 + nline;
-                    } else {
+                    if (/19216823/.test(addr)) {
                         right.push(sho);
-                        rightSize += 1 + nline;
+                    } else {
+                        left.push(sho);
                     }
                 }
             }
@@ -119,14 +113,17 @@ class BodyIPZone extends React.Component {
         }
         let body = ce('table', {className: 'boxaddr'},
             ce('tbody', null, ...rows));
-        let props = { cls: "wide", title: title, body: body };
+        let props = { cls: "nowide", title: title, body: body };
         return ce(core.WindowBox, props);
     }
 }
 
 class BodyIPElm extends React.Component {
+    intervalID;
+
     constructor(props) {
         super(props);
+        this.state = { status: data.getIPStatus(this.props.ip), mark: false }
     }
 
     render() {
@@ -136,12 +133,42 @@ class BodyIPElm extends React.Component {
         if (match) {
             adr = Number(match[4]);
         }
-        if ((adr&0x1) == 1) {
-            sets.className = 'iponline';
-        } else {
-            sets.className = 'ipempty';
+        let cls = 'ipcell';
+        let status = this.state.status;
+        if (status & data.st_exist) {
+            cls += ' ipexist';
+        } else if (status & (data.st_online | data.st_offline)) {
+            cls += ' ipused';
         }
+        if (status & data.st_online) {
+            cls += ' ipon';
+        } else if (status & data.st_offline) {
+            cls += ' ipoff';
+        }
+        if (this.state.mark) {
+            cls += ' ipdyn';
+        }
+        sets.className = cls;
         return ce('div', sets, adr);
+    }
+
+    componentDidMount() {
+        this.intervalID = setInterval(() => this.tick(), 1000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.intervalID);
+    }
+
+    tick() {
+        let status = data.getIPStatus(this.props.ip);
+        if (status != this.state.status) {
+            this.setState({ status: status, mark: false })
+        } else if (this.state.mark) {
+            this.setState({ status: this.state.status, mark: false  })
+        } else if (status & data.st_dynamic) {
+            this.setState({ status: this.state.status, mark: true })
+        }
     }
 }
 
