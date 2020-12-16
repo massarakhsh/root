@@ -11,18 +11,28 @@ export class ElmAddress extends core.ElmStack {
     }
 
     showBody() {
-        return ce(BodyAddress, { level: this.props.level });
+        if (this.state.mode == 'matrix') {
+            return ce(BodyAddressMap, {level: this.props.level});
+        } else if (this.state.mode == 'list') {
+            return ce(BodyAddressList, {level: this.props.level});
+        } else {
+            return ce(BodyAddressMap, {level: this.props.level});
+        }
     }
 
     buildMenu() {
         return [
-            { cmd: 'root', title: 'Рут'},
-            { cmd: 'address', title: 'Адреса'},
-            { cmd: 'makar', title: 'Макар'},
+            { cmd: 'matrix', title: 'Матрица'},
+            { cmd: 'list', title: 'Список'},
         ];
     }
 
     setCommand(cmd) {
+        if (cmd == 'matrix') {
+            this.setPath(cmd);
+        } else if (cmd == 'list') {
+            this.setPath(cmd);
+        }
         return super.setCommand(cmd);
     }
 
@@ -31,7 +41,7 @@ export class ElmAddress extends core.ElmStack {
 
 }
 
-class BodyAddress extends React.Component {
+class BodyAddressMap extends React.Component {
     listZone = null;
 
     constructor(props) {
@@ -82,6 +92,62 @@ class BodyAddress extends React.Component {
             ce("tbody", null, ce("tr", null,
                 ce("td", { className: "column" }, ...left),
                 ce("td", { className: "column" }, ...right),
+            )),
+        )
+    }
+}
+
+class BodyAddressList extends React.Component {
+    listZone = null;
+
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        if (this.listZone) {
+            return this.showCommonMap();
+        } else {
+            data.getServerData('/api/list/IPZone', this);
+            return ce('i', null, 'Загрузка ...');
+        }
+    }
+
+    setServerData(path, list) {
+        this.listZone = list.IPZone;
+        this.forceUpdate();
+    }
+
+    showCommonMap() {
+        let left = [];
+        let right = [];
+        if (this.listZone) {
+            this.listZone.sort((prev, next) => {
+                if (prev.Bit < next.Bit) return -1;
+                if (prev.Bit > next.Bit) return 1;
+                if (prev.IP < next.IP) return -1;
+                if (prev.IP > next.IP) return 1;
+                return 0;
+            });
+            for (const dia of this.listZone) {
+                if ((dia.Roles&0x4) == 0) {
+                    let addr = dia.IP;
+                    let bit = dia.Bit;
+                    if (bit < 24) bit = 24;
+                    else if (bit > 32) bit = 32;
+                    const sho = ce(BodyIPZone, { ip: addr, bit: bit })
+                    if (/19216823/.test(addr)) {
+                        right.push(sho);
+                    } else {
+                        left.push(sho);
+                    }
+                }
+            }
+        }
+        return ce("table", { className: "page" },
+            ce("tbody", null, ce("tr", null,
+                ce("td", { className: "column" }, ...left),
+                ce("td", { className: "column" }, right[0]),
             )),
         )
     }

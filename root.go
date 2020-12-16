@@ -6,7 +6,6 @@ import (
 	"github.com/massarakhsh/lik/likapi"
 	"github.com/massarakhsh/root/base"
 	"github.com/massarakhsh/root/front"
-	"github.com/massarakhsh/root/task/baser"
 	"log"
 	"net/http"
 	"os"
@@ -26,9 +25,6 @@ func main() {
 	if !base.OpenDB(base.HostServ, base.HostBase, base.HostUser, base.HostPass) {
 		return
 	}
-	baser.StartBaser()
-	baser.StartPinger()
-	baser.StartARP()
 	startHttp()
 	for !base.IsStoping {
 		time.Sleep(time.Second)
