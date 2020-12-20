@@ -51,20 +51,21 @@ export function getServerData(path, elm) {
 }
 
 export function getSys(table, sys) {
-    return getRegister('/table/' + table + '/' + sys);
+    return getRegister('/' + table + '/' + sys);
 }
 
 export function getKey(table, key, val) {
-    let tbl = getRegister('/table/' + table);
+    let list = [];
+    let tbl = getRegister('/' + table);
     if (tbl) {
         for (var sys in tbl) {
             let elm = tbl[sys];
             if (elm && elm[key] == val) {
-                return elm;
+                list.push(elm);
             }
         }
     }
-    return null;
+    return list;
 }
 
 export const st_exist = 0x1;

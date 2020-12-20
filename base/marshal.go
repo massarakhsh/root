@@ -2,25 +2,24 @@ package base
 
 import (
 	"github.com/massarakhsh/lik"
+	"github.com/massarakhsh/lik/likmarshal"
+	"time"
 )
 
-var indexData = 0
+func StartMarshal() {
+	go func() {
+		for !IsStoping {
+			UpdateMarshal()
+			time.Sleep(time.Second * 30)
+		}
+	}()
+}
+
+func UpdateMarshal() {
+	likmarshal.UpdateBase(DB, []string { "IPZone", "IP", "Ping", "Unit", "Link" }, "SysNum")
+}
 
 func BuildMarshal(index int) lik.Seter {
-	indexData++
-	answer := lik.BuildSet("index", indexData)
-	register := lik.BuildSet()
-	answer.SetItem(register, "register")
-	for _, table := range []string {"IPZone","IP","Ping"} {
-		tbl := lik.BuildSet()
-		register.SetItem(tbl, table)
-		list := GetList(table)
-		for ne := 0; ne < list.Count(); ne++ {
-			if elm := list.GetSet(ne); elm != nil {
-				tbl.SetItem(elm, elm.GetString("SysNum"))
-			}
-		}
-	}
-	return answer
+	return likmarshal.Answer(index)
 }
 

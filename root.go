@@ -25,6 +25,7 @@ func main() {
 	if !base.OpenDB(base.HostServ, base.HostBase, base.HostUser, base.HostPass) {
 		return
 	}
+	base.StartMarshal()
 	startHttp()
 	for !base.IsStoping {
 		time.Sleep(time.Second)
