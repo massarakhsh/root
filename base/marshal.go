@@ -10,7 +10,7 @@ func StartMarshal() {
 	go func() {
 		for !IsStoping {
 			UpdateMarshal()
-			time.Sleep(time.Second * 30)
+			time.Sleep(time.Second * 10)
 		}
 	}()
 }

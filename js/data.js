@@ -78,9 +78,18 @@ export function getIPStatus(ip) {
     const listip = getKey('IP', 'IP', ip);
     const listping = getKey('Ping', 'IP', ip);
     if (listip && listip.length) {
-        status |= st_exist;
-        if (listip[0].Roles & 0x1000) {
-            status |= st_online;
+        for (let np=0; np < listip.length; np++) {
+            status |= st_exist;
+            if (listip[np].Roles & 0x1000) {
+                status |= st_online;
+            }
+            if (listip[np].TimeOn || listip[np].TimeOff) {
+                let bon = (listip[np].TimeOn >= listip[np].TimeOff);
+                let last = (bon) ? listip[np].TimeOn : listip[np].TimeOff;
+                let now = Date.now() / 1000;
+                let dura = now - last;
+                if (dura < 300) status |= st_dynamic;
+            }
         }
     }
     if (listping && listping.length) {
