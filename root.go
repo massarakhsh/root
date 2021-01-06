@@ -25,7 +25,6 @@ func main() {
 	if !base.OpenDB(base.HostServ, base.HostBase, base.HostUser, base.HostPass) {
 		return
 	}
-	base.StartMarshal()
 	startHttp()
 	for !base.IsStoping {
 		time.Sleep(time.Second)
@@ -97,11 +96,11 @@ func router(w http.ResponseWriter, r *http.Request) {
 	if rule.IsShift("api") {
 		json := rule.ApiExecute()
 		likapi.RouteCookies(w, rule.GetAllCookies())
-		likapi.RouteJson(w, 200, json, false)
+		likapi.RouteJson(w, json)
 	} else if rule.IsShift("front") {
 		json := rule.Execute()
 		likapi.RouteCookies(w, rule.GetAllCookies())
-		likapi.RouteJson(w, 200, json, false)
+		likapi.RouteJson(w, json)
 	} else {
 		html := rule.ShowPage()
 		likapi.RouteCookies(w, rule.GetAllCookies())

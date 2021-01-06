@@ -14,12 +14,13 @@ func (rule *DataRule) ShowPage() likdom.Domer {
 		head.BuildString("<script type='text/javascript' src='/lib/react.js'></script>")
 		head.BuildString("<script type='text/javascript' src='/lib/react-dom.js'></script>")
 		head.BuildString("<script type='text/javascript' src='/js/lik.js'></script>")
+		head.BuildString("<script type='text/javascript' src='/js/likref.js'></script>")
 		head.BuildString("<link rel='stylesheet' href='/js/main.css'/>")
 	}
 	if body, _ := html.GetDataTag("body"); body != nil {
 		if script := body.BuildItem("script", "type=module"); script != nil {
-			code := "import {script_start} from '/js/main.js';"
-			code += "script_start();"
+			code := "import {script_start} from '/js/main.js';\n"
+			code += "jQuery(window).load(function() { script_start(); });"
 			script.BuildString(code)
 		}
 		body.BuildDiv("id=root")

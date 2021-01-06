@@ -73,6 +73,13 @@ export class ElmStack extends React.Component {
             state.path = loc.path;
             this.setState(state);
         }
+        let url = this.getParentPath();
+        if (/^\//.test(path)) {
+            url += path;
+        } else if (path) {
+            url += '/' + path;
+        }
+        lik_set_history(url);
     }
 
     toPath(path) {
@@ -91,8 +98,12 @@ export class ElmStack extends React.Component {
         return this.props.level + 1 >= stackElms.length;
     }
 
+    getParentPath() {
+        return (this.props.level > 0) ? stackElms[this.props.level - 1].getPath() + "/" + this.main : "";
+    }
+
     getPath() {
-        let path = (this.props.level > 0) ? stackElms[this.props.level - 1].getPath() + "/" + this.main : "";
+        let path = this.getParentPath();
         if (this.props.level + 1 >= stackElms.length && this.state.mode) {
             path += "/" + this.state.mode;
         }

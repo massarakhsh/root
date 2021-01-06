@@ -10,8 +10,6 @@ func (rule *DataRule) ApiExecute() lik.Seter {
 		rule.apiList(rule.Shift())
 	} else if rule.IsShift("get") {
 		rule.apiGet(rule.Shift(), lik.StrToIDB(rule.Shift()))
-	} else if rule.IsShift("marshal") {
-		rule.apiMarshal(lik.StrToInt(rule.Shift()))
 	}
 	return rule.GetAllResponse()
 }
@@ -24,12 +22,5 @@ func (rule *DataRule) apiList(table string) {
 func (rule *DataRule) apiGet(table string, sys lik.IDB) {
 	elm := base.GetElm(table, sys)
 	rule.SetResponse(elm, table)
-}
-
-func (rule *DataRule) apiMarshal(index int) {
-	answer := base.BuildMarshal(index)
-	for _,set := range answer.Values() {
-		rule.SetResponse(set.Val, set.Key)
-	}
 }
 
