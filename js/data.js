@@ -1,23 +1,18 @@
-export function getServerData(path, elm) {
-    get_data_proc(path,
-        function (elm, lika) {
-            if (lika) {
-                elm.setServerData(path, lika);
-            }
-        }, elm);
-}
 
 export function getSys(table, sys) {
-    return getRegister('/' + table + '/' + sys);
+    return lik_ref_get('/' + table + '/' + sys);
 }
 
 export function getKey(table, key, val) {
     let list = [];
-    let tbl = getRegister('/' + table);
+    let tbl = lik_ref_get('/' + table);
     if (tbl) {
         for (var sys in tbl) {
             let elm = tbl[sys];
-            if (elm && elm[key] == val) {
+            if (!elm) {
+            } else if (!key) {
+                list.push(elm);
+            } else if (elm[key] == val) {
                 list.push(elm);
             }
         }
@@ -29,6 +24,10 @@ export const st_exist = 0x1;
 export const st_online = 0x2;
 export const st_offline = 0x4;
 export const st_dynamic = 0x8;
+
+export function getListZone() {
+    return getKey('IPZone');
+}
 
 export function getIPStatus(ip) {
     let status = 0;

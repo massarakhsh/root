@@ -22,9 +22,6 @@ func main() {
 	if !getArgs() {
 		return
 	}
-	if !base.OpenDB(base.HostServ, base.HostBase, base.HostUser, base.HostPass) {
-		return
-	}
 	startHttp()
 	for !base.IsStoping {
 		time.Sleep(time.Second)
@@ -37,28 +34,12 @@ func getArgs() bool {
 	if val := args.GetString("port"); val != "" {
 		base.HttpPort = lik.StrToInt(val)
 	}
-	if val := args.GetString("serv"); val != "" {
-		base.HostServ = val
-	}
-	if val := args.GetString("base"); val != "" {
-		base.HostBase = val
-	}
-	if val := args.GetString("user"); val != "" {
-		base.HostUser = val
-	}
-	if val := args.GetString("pass"); val != "" {
-		base.HostPass = val
-	}
 	if val := args.GetString("debug"); val != "" {
 		DebugLevel = lik.StrToInt(val)
 	}
 	if !ok {
 		fmt.Println("Usage: root [-key val | --key=val]...")
 		fmt.Println("port    - port value (80)")
-		fmt.Println("serv    - Database server")
-		fmt.Println("base    - Database name")
-		fmt.Println("user    - Database user")
-		fmt.Println("pass    - Database pass")
 	}
 	return ok
 }
@@ -93,18 +74,8 @@ func router(w http.ResponseWriter, r *http.Request) {
 	if !lik.RegExCompare(r.RequestURI, "marshal") {
 		lik.SayInfo(r.RequestURI)
 	}
-	if rule.IsShift("api") {
-		json := rule.ApiExecute()
-		likapi.RouteCookies(w, rule.GetAllCookies())
-		likapi.RouteJson(w, json)
-	} else if rule.IsShift("front") {
-		json := rule.Execute()
-		likapi.RouteCookies(w, rule.GetAllCookies())
-		likapi.RouteJson(w, json)
-	} else {
-		html := rule.ShowPage()
-		likapi.RouteCookies(w, rule.GetAllCookies())
-		likapi.RouteHtml(w, 200, html.ToString())
-	}
+	html := rule.ShowPage()
+	likapi.RouteCookies(w, rule.GetAllCookies())
+	likapi.RouteHtml(w, 200, html.ToString())
 }
 
