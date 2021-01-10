@@ -42,32 +42,38 @@ export class ElmAddress extends core.ElmStack {
 }
 
 class BodyAddressMap extends React.Component {
+    list_zones = null;
 
     constructor(props) {
         super(props);
     }
 
     render() {
-        let zones = data.getListZone();
-        if (zones) {
-            return this.showCommonMap(zones);
+        if (this.list_zones) {
+            return this.showCommonMap();
         } else {
+            data.getListZone((zones) => {
+                this.list_zones = zones;
+                if (zones) {
+                    this.forceUpdate();
+                }
+            });
             return ce('i', null, 'Загрузка ...');
         }
     }
 
-    showCommonMap(zones) {
+    showCommonMap() {
         let left = [];
         let right = [];
-        if (zones) {
-            zones.sort((prev, next) => {
+        if (this.list_zones) {
+            this.list_zones.sort((prev, next) => {
                 if (prev.Bit < next.Bit) return -1;
                 if (prev.Bit > next.Bit) return 1;
                 if (prev.IP < next.IP) return -1;
                 if (prev.IP > next.IP) return 1;
                 return 0;
             });
-            for (const dia of zones) {
+            for (const dia of this.list_zones) {
                 if ((dia.Roles&0x4) == 0) {
                     let addr = dia.IP;
                     let bit = dia.Bit;
@@ -127,7 +133,7 @@ class BodyIPElm extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { status: data.getIPStatus(this.props.ip), mark: false }
+        this.state = { status: 0, mark: false }
     }
 
     render() {
@@ -165,7 +171,10 @@ class BodyIPElm extends React.Component {
     }
 
     tick() {
-        let status = data.getIPStatus(this.props.ip);
+        data.getIPStatus(this.props.ip, (status) => this.draw(status));
+    }
+
+    draw(status) {
         if (status != this.state.status) {
             this.setState({ status: status, mark: false })
         } else if (this.state.mark) {
