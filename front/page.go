@@ -1,4 +1,4 @@
-package front
+	package front
 
 import (
 	"github.com/massarakhsh/lik/likdom"
